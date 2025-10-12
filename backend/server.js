@@ -20,9 +20,13 @@ app.get('/hello',(req,res)=>{
 
 io.on('connection',(socket)=>{
     console.log("connected user")
+    console.log('aktualnie połączonych:', io.engine.clientsCount);
     socket.on('join-room',(room_id)=>{
         socket.join(room_id)
         console.log(`polaczono z pokojem ${room_id}`)
+    })
+    socket.on('send-message',(room_id,message)=>{
+        socket.to(room_id).emit('receive-message',message)
     })
 })
 
