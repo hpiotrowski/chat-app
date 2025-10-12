@@ -1,9 +1,12 @@
 'use client'
+import LoginButton from "@/components/LoginButton";
 import { useEffect, useState } from "react";
 import { io } from "socket.io-client";
+import { useAuth0 } from "@auth0/auth0-react";
 const socket = io("http://localhost:4000");
 
 export default function Home() {
+  const { user, isAuthenticated, isLoading } = useAuth0();
 
   useEffect(() => {
     socket.on('connect', () => {
@@ -69,7 +72,7 @@ export default function Home() {
         Wyślij
       </button>
     </form>
-
+    {!isAuthenticated ? <LoginButton></LoginButton> : <div>Witaj {user.name}</div>}
 </>
 
   );
