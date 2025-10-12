@@ -26,7 +26,7 @@ io.on('connection',(socket)=>{
         console.log(`polaczono z pokojem ${room_id}`)
     })
     socket.on('send-message',(room_id,message)=>{
-        socket.to(room_id).emit('receive-message',message)
+        io.in(room_id).emit('receive-message',message)
     })
 })
 
