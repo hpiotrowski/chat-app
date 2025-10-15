@@ -4,6 +4,8 @@ import { useEffect, useState } from "react";
 import { io } from "socket.io-client";
 import { useAuth0 } from "@auth0/auth0-react";
 import LogoutButton from "@/components/LogoutButton";
+import { Button } from "@/components/ui/button";
+import ThemeToggle from "@/components/ThemeToggle";
 
 let socket=null;
 export default function Home() {
@@ -105,6 +107,8 @@ export default function Home() {
     </form>
     {!isAuthenticated ? <LoginButton></LoginButton> : <div>Witaj {user.name}</div>}
     <LogoutButton></LogoutButton>
+    <Button variant="outline">Button</Button>
+    <ThemeToggle></ThemeToggle>
 </>
 
   );
