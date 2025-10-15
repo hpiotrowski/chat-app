@@ -3,27 +3,56 @@ import LoginButton from "@/components/LoginButton";
 import { useEffect, useState } from "react";
 import { io } from "socket.io-client";
 import { useAuth0 } from "@auth0/auth0-react";
-const socket = io("http://localhost:4000");
+import LogoutButton from "@/components/LogoutButton";
 
+let socket=null;
 export default function Home() {
-  const { user, isAuthenticated, isLoading } = useAuth0();
+  const { user, isAuthenticated, isLoading, getAccessTokenSilently} = useAuth0();
+
+ 
 
   useEffect(() => {
-    socket.on('connect', () => {
-      console.log('Połączono z socketem:', socket.id);
-    });
+    console.log('useEffect start, isAuthenticated:', isAuthenticated);//debug
   
-    socket.on('receive-message', (msg) => {
-      console.log('📩 Wiadomość odebrana:', msg);
-      setLastMsg(msg)
-    });
+    const handleConnect = async () => {
+      if (!isAuthenticated) return;
+  
+      try {
+        const token = await getAccessTokenSilently({
+          authorizationParams: {
+            audience: "http://localhost:4000/api"
+          }
+        });
+  
+        console.log("token:", token);
+  
+        socket = io("http://localhost:4000", {
+          auth: { token }
+        });
+  
+        socket.on('connect', () => {
+          console.log('Połączono z socketem:', socket.id);
+        });
+  
+        socket.on('receive-message', (msg) => {
+          console.log('Wiadomość odebrana:', msg);
+          setLastMsg(msg);
+        });
+      } catch (error) {
+        console.error('Błąd podczas łączenia z socketem:', error);
+      }
+    };
+  
+    handleConnect();
   
     return () => {
-      socket.off('connect');
-      socket.off('receive-message');
+      if (socket) {
+        socket.off('connect');
+        socket.off('receive-message');
+        socket.disconnect();
+      }
     };
-  }, []);
-  
+  }, [isAuthenticated, getAccessTokenSilently]);
 
   const [currentRoom,setCurrentRoom]=useState()
   const [lastMsg,setLastMsg]=useState('default')
@@ -46,10 +75,12 @@ export default function Home() {
     socket.emit('send-message',1,"123")
   }
   function handleSubmit(e){
+    if(socket.connected){
     console.log('submitted')
     e.preventDefault();
     socket.emit('send-message',currentRoom,message);
     setMessage("")
+    }
   }
   return (
 <>
@@ -73,6 +104,7 @@ export default function Home() {
       </button>
     </form>
     {!isAuthenticated ? <LoginButton></LoginButton> : <div>Witaj {user.name}</div>}
+    <LogoutButton></LogoutButton>
 </>
 
   );
