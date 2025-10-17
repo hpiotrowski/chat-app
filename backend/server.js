@@ -52,9 +52,25 @@ io.on('connection',(socket)=>{
         socket.join(room_id)
         console.log(`polaczono z pokojem ${room_id}`)
     })
-    socket.on('send-message',(room_id,message)=>{
-        io.in(room_id).emit('receive-message',message)
-    })
+    socket.on('send-message', (room_id, message) => {
+        console.log(`Otrzymano wiadomość w pokoju ${room_id}:`, message);
+        
+        const messageData = {
+            id: Date.now(),
+            content: message,
+            timestamp: new Date().toISOString(),
+            userId: socket.user.sub,
+            userName: socket.user.name,
+        };
+        
+        const payload = {
+            roomId: room_id,
+            message: messageData
+        };
+        
+        console.log('Wysyłam do pokoju:', payload);
+        io.in(room_id).emit('receive-message', payload);
+    });
 })
 
 

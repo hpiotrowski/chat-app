@@ -3,6 +3,7 @@ import AuthProvider from "./AuthProvider";
 import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
 import { ThemeProvider } from "@/components/ThemeProvider";
+import { ChatProvider } from "@/contexts/ChatContext";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -19,9 +20,11 @@ export default function RootLayout({ children }) {
     <html lang="en" suppressHydrationWarning>
       <body className={`${geistSans.variable} ${geistMono.variable} antialiased`}>
         <ThemeProvider attribute="class" defaultTheme="system" enableSystem>
-        <AuthProvider>
-          {children}
-        </AuthProvider>
+          <AuthProvider>
+            <ChatProvider>
+              {children}
+            </ChatProvider>
+          </AuthProvider>
         </ThemeProvider>
       </body>
     </html>

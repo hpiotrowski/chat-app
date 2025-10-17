@@ -1,8 +1,14 @@
 'use client';
 
 import { Separator } from "@/components/ui/separator";
+import { Button } from "@/components/ui/button";
+import { useChat } from "@/contexts/ChatContext";
+import { cn } from "@/lib/utils";
 
 export function Sidebar() {
+  const { rooms, currentRoom, setCurrentRoom, joinRoom } = useChat();
+  console.log('Sidebar rendering, rooms:', rooms);
+
   return (
     <div className="h-full border-r bg-background">
       <div className="flex flex-col h-full">
@@ -12,13 +18,24 @@ export function Sidebar() {
         <Separator />
 
         <div className="flex-1 overflow-y-auto p-3">
-          <nav className="flex flex-col gap-y-2">
-            {/* Room list będzie tutaj */}
+          <nav className="flex flex-col gap-y-1">
+            {rooms?.map((room) => (
+              <Button
+                key={room.id}
+                variant={currentRoom?.id === room.id ? "secondary" : "ghost"}
+                className={cn(
+                  "justify-start",
+                  currentRoom?.id === room.id && "bg-muted"
+                )}
+                onClick={() => {
+                  setCurrentRoom(room);
+                  joinRoom(room.id);
+                }}
+              >
+                # {room.name}
+              </Button>
+            ))}
           </nav>
-        </div>
-
-        <div className="p-4 border-t">
-          {/* User profile */}
         </div>
       </div>
     </div>
