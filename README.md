@@ -20,3 +20,7 @@ This is real-time chat application. Design is inspired by Discord.
 - **Secure Authentication**: Utilize modern security practices to ensure user data protection.
 - **Dynamic Room Management**: Create and manage chat rooms effectively.
 
+
+## Whats next?:
+
+In the future I am planning on addid more features like settings, changing usernames, adding database, creating custom rooms
