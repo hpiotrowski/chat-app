@@ -8,6 +8,8 @@ import { Button } from "@/components/ui/button";
 import ThemeToggle from "@/components/ThemeToggle";
 
 let socket=null;
+import { MainLayout } from "@/components/layout/MainLayout";
+
 export default function Home() {
   const { user, isAuthenticated, isLoading, getAccessTokenSilently} = useAuth0();
 
@@ -84,32 +86,34 @@ export default function Home() {
     setMessage("")
     }
   }
+  if (!isAuthenticated) {
+    return <LoginButton />;
+  }
+
   return (
-<>
-<div className="flex justify-between w-1/2 items-center">
-  <button className="rounded border border-blue-400 hover:cursor-pointer" onClick={()=>join(1)}>room1</button>
-  <button className="rounded border border-blue-400 hover:cursor-pointer" onClick={()=>join(2)}>room2</button>
-  <button className="rounded border border-blue-400 hover:cursor-pointer" onClick={()=>sendTest()}>room2</button>
+    <MainLayout>
+      <div className="space-y-4">
+        <div className="flex gap-2">
+          <Button onClick={() => join(1)}>Room 1</Button>
+          <Button onClick={() => join(2)}>Room 2</Button>
+          <Button onClick={sendTest}>Test Message</Button>
+        </div>
 
-  <div>{lastMsg}</div>
-</div>
-<form onSubmit={handleSubmit} className="flex gap-2">
-      <input
-        type="text"
-        placeholder="Wpisz wiadomość..."
-        value={message}
-        onChange={(e) => setMessage(e.target.value)}
-        className="border rounded px-2 py-1 flex-1"
-      />
-      <button type="submit" className="bg-blue-500 text-white rounded px-3 py-1 hover:bg-blue-600">
-        Wyślij
-      </button>
-    </form>
-    {!isAuthenticated ? <LoginButton></LoginButton> : <div>Witaj {user.name}</div>}
-    <LogoutButton></LogoutButton>
-    <Button variant="outline">Button</Button>
-    <ThemeToggle></ThemeToggle>
-</>
+        <div className="bg-muted p-4 rounded-lg">
+          <p>{lastMsg}</p>
+        </div>
 
+        <form onSubmit={handleSubmit} className="flex gap-2">
+          <input
+            type="text"
+            placeholder="Type a message..."
+            value={message}
+            onChange={(e) => setMessage(e.target.value)}
+            className="flex-1 rounded-md border bg-background px-3 py-2"
+          />
+          <Button type="submit">Send</Button>
+        </form>
+      </div>
+    </MainLayout>
   );
 }
